@@ -1,0 +1,83 @@
+== Widget ==
+
+=== BaseListAdapter ===
+
+`BaseListAdapter` 是 `BaseAdapter` 的子类，类似于 `ArrayAdapter` , 该类设计用来将任何类型的对象列表和ListView进行绑定。
+
+
+.使用方法
+------------------------------------------------
+listAdapter = new ListAdapter(this);
+------------------------------------------------
+
+
+.将异步获取的数据填充到列表中
+------------------------------------------------
+listAdapter.refresh(list);
+------------------------------------------------
+
+.追加新元素（用于分页）
+------------------------------------------------
+listAdapter.refresh(newList, true);
+------------------------------------------------
+
+
+.删除列表中的元素
+------------------------------------------------
+listAdapter.remove(item);
+
+// or
+listAdapter.remove(position);
+------------------------------------------------
+
+
+.实例
+------------------------------------------------
+public class ListAdapter extends BaseListAdapter<Person> {
+    private ImageLoader imageLoader;
+    private DisplayImageOptions options;
+
+    public ListAdapter(Context context) {
+        super(context);
+
+        imageLoader = ImageLoaderManager.getImageLoader(context);
+        options = ImageLoaderManager.createDisplayImageOptions(
+                R.drawable.ic_launcher, ImageScaleType.EXACT);
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View view;
+        if (convertView == null) {
+            view = mInflater.inflate(R.layout.demolist_item, null);
+            Holder holder = new Holder();
+            holder.name = (TextView) view.findViewById(R.id.item_name);
+            holder.address = (TextView) view.findViewById(R.id.item_address);
+            holder.image = (ImageView) view.findViewById(R.id.item_image);
+            view.setTag(holder);
+        } else {
+            view = convertView;
+        }
+
+        Holder holder = (Holder) view.getTag();
+        Person bean = list.get(position);
+
+        holder.name.setText(bean.name);
+        holder.address.setText(bean.address);
+        // 异步载入网络图片
+        imageLoader.displayImage(bean.image, holder.image, options);
+
+        return view;
+    }
+
+    class Holder {
+        TextView name;
+        TextView address;
+        ImageView image;
+    }
+
+}
+------------------------------------------------
+
+
+

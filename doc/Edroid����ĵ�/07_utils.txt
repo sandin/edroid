@@ -1,0 +1,85 @@
+== Utils ==
+
+此包包含各类工具，如图片处理，时间处理，IO操作，文字操作等。
+
+
+=== BitmapUtils ===
+
+
+==== resizeBitmap ====
+
+保持长宽比缩小Bitmap
+
+如果超过指定的长宽，则按比例缩小图片，以宽度为主，长度如果超过，则会居中截取。
+
+
+.尺寸压缩示例:
+    * 100*50: 200px*100px -> 100px*50px
+    * 100*50: 200px*120px -> 100px*50px 上下各裁去10px
+    * 100*50: 200px*80px  -> 100px*40px 
+
+
+实现方式为 `Bitmap.createScaledBitmap` 来实现缩放， `Bitmap.createBitmap` 来实现剪切。
+
+
+==== compressImage ====
+
+按比例decode文件到bitmap.
+
+提供 maxWidth , maxHeight, 来生成scale, 保持长宽比例缩小图片。
+
+
+实现方式为 `BitmapFactory.Options.inSampleSize` 
+TODO: 在imageloader中有更优秀的计算等比scale算法。
+
+
+
+=== TaskUtils ===
+
+该帮助类主要和 `AsyncTask` 有关，例如强制关闭某个Task，或判断某个Task是否正在运行。
+
+
+.强制关闭Task
+---------------------------------
+TaskUtils.cancelTaskInterrupt(downloadTask);
+---------------------------------
+
+在Activity中启动的Task并不会在Activity结束时停止进程的运行，所以有时需要手动调用该方法来停止子进程。
+
+
+.判断Task是否正在运行
+------------------------------------
+if (! TaskUtils.isRunning(downloadTask) ) { // 如果没有正在运行
+    downloadTask.execute();
+}
+------------------------------------
+
+
+这样可避免同一个任务同时并运行两遍。
+
+
+
+=== TextUtil ===
+
+该帮助类负责与文字处理有关的。
+
+NOTE: 注意这里需要和 Android 自带的 `TextUtils` 做区别，所以起名为 `TextUtil` 。
+
+
+
+=== truncate2 ===
+
+截取字符串 中文算1个字符，英文算半个字符
+
+.例如：
+----------------------------------
+String text = "中文测试456789";
+
+text = TextUtil.truncate2(text, 5, "...");
+System.out.println(text);
+// output: "中文测试45..."
+----------------------------------
+
+NOTE: 如果不区别中英文，则应使用 `TextUtil.truncate()` , 中英文都算一个字符。
+
+

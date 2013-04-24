@@ -1,0 +1,94 @@
+== DAO ==
+
+本包提供了基本的增删改查模板，类似于Spring JDBCTemplte.
+
+
+=== 继承BaseDao ===
+
+
+继承 `BaseDao` 需要实现两个方法即可:
+-----------------------------
+
+    /**
+     * 将Cursor解析成指定的对象
+     * Convert cursor to object
+     * 
+     * @param cursor 请不要手动关闭它,Cursor可能装的是个list
+     * @return
+     */
+    abstract public T cursorToObject(Cursor cursor);
+    
+    /**
+     * 将对象的域转换成ContentValues, 用于入库
+     * Convert object to ContentValues
+     * for insert/update it into the database
+     * 
+     * @param row
+     * @return
+     */
+    abstract public ContentValues objectToValues(T row);
+
+-----------------------------
+
+一个是将 `Cursor` 解析成 `Object` ， 另一个是将 `Object` 转成 `ContentValues` . 继承的子类就可以使用 `BaseDao` 的增删改查模板。
+
+
+.子类实例
+----------------------------------------------------
+public class CategoryDao extends BaseDao<Category> {
+   
+    public CategoryDao(SQLiteOpenHelper openHelper) {
+        super(openHelper, AccountDatabase.CATEGORY_TABLE_NAME);
+    }
+
+    @Override
+    public Category cursorToObject(Cursor cursor) {
+        Category item = new Category();
+        item.setName(cursor.getString(cursor.getColumnIndexOrThrow(CategoryCols.NAME)));
+        item.setId(cursor.getLong(cursor.getColumnIndexOrThrow(CategoryCols._ID)));
+        return item;
+    }
+    
+    @Override
+    public ContentValues objectToValues(Category obj) {
+        ContentValues values = new ContentValues();
+        values.put(CategoryCols.NAME, obj.getName());
+        return values;
+    }
+
+}
+----------------------------------------------------
+
+
+
+
+=== 增删改查 ===
+
+.增
+--------------------------
+Category row = createCategory();
+long id = dao.insert(row);
+--------------------------
+
+.删
+----------------------------
+dao.delete(id);
+----------------------------
+
+.改
+-----------------------------
+ContentValues values = new ContentValues();
+values.put(CategoryCols.NAME, newname);
+dao.update(id, values);
+-----------------------------
+
+.查
+-----------------------------
+Category category = dao.findById(id); // 按主键查
+
+List<Category> categories = dao.findAll(); // 查询所有
+
+category = dao.findOneByFields(null, CategoryCols._ID + "=" + id, null, null); // 查询条件
+
+list = dao.findListByFields(null, CategoryCols._ID + "=" + id, null, null);
+-----------------------------

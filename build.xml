@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="doc" name="api docs">
+
+<!-- 生成JAVADOC -->
+<target name="doc" description="my docs">
+    <javadoc destdir="docs" doctitle="Edroid" verbose="on" 
+        use="true" 
+        additionalparam="-encoding utf-8 -charset utf-8 "
+        classpath="C:\Program Files\Android\android-sdk\platforms\android-7"
+        sourcepath="src"
+        linkoffline="http://d.android.com/reference C:\Program Files\Android\android-sdk\docs\reference"
+        stylesheetfile="C:\Program Files\Android\android-sdk\docs\assets\android-developer-docs.css"
+        >
+    </javadoc>
+</target>
+
+</project>
+

@@ -1,0 +1,52 @@
+== ImageLoader ==
+
+本包仅为开源项目 `https://github.com/nostra13/Android-Universal-Image-Loader` 的工厂类。
+
+
+`UniversalImageLoader` 项目主要实现了图片异步加载，图片缓存等相关功能，本框架将直接使用它们作为一个图片加载模块。
+
+
+NOTE: 注意图片加载模块使用的Cache为自己实现的，而非框架中的Cache模块。
+
+
+
+=== ImageLoaderManager ===
+
+本类为帮助类，提供 `ImageLoader` 实例的工厂方法，和配置生成等。
+
+NOTE: 建议在使用的时候直接COPY过去，自己实现一个 `ImageLoaderManager` ， 这样配置等修改起来就比较简单，该类仅提供一个模板和示范的功能。
+
+
+.获得实例
+------------------------------------
+imageLoader = ImageLoaderManager.getImageLoader(this);
+------------------------------------
+
+.异步加载图片
+------------------------------------
+imageLoader.displayImage(url, imageView, options);
+------------------------------------
+
+每次加载图片都可以提供一个 `DisplayImageOptions` , 用于告诉imageloader该如何去显示该图片。
+
+.生成displayImageOptions
+----------------------------------------
+options = new DisplayImageOptions.Builder()
+                .cacheInMemory() // 开启内存缓存
+                .cacheOnDisc() // 开启文件缓存
+                .setMinSideLength(700) // 限制图片大小
+                .setMaxNumOfPixels(-1) 
+                .showStubImage(R.drawable.ic_launcher) // 默认图片
+                .build();
+
+// 或者使用工厂类
+options = ImageLoaderManager.createDisplayImageOptions(
+        defaultImageResId,
+        imageScaleType);
+----------------------------------------
+
+
+.清除所有缓存（内存/文件）
+---------------------------
+ImageLoaderManager.clearCache(context);
+---------------------------

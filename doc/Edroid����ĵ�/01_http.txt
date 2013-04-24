@@ -1,0 +1,42 @@
+== HTTP ==
+
+HTTP包负责框架内的所有HTTP请求，内部使用的是 `org.apache.http.impl.client.DefaultHttpClient` 来实现HTTP请求部分。
+
+NOTE: 此HttpClient是支持多线程并发来发送HTTP请求的，且是线程安全。
+
+
+.发送简单的HTTP请求
+-----------------------------------
+String html = SimpleHttp.doGet("http://www.google.com.hk");
+-----------------------------------
+
+.发送一个带参数的POST请求
+------------------------------
+List<NameValuePair> params = new ArrayList<NameValuePair>(); // 请求参数
+params.add(new BasicNameValuePair("keyword", "china"));
+String res = SimpleHttp.doPost("http://www.google.com.hk", params);
+------------------------------
+
+.获取InputStream
+---------------------------------
+final SimpleHttp http = SimpleHttp.getInstance();
+Response res = http.get("http://www.google.com.hk");
+InputStream in = res.asStream();
+---------------------------------
+
+.上传文件
+---------------------------------
+URI uri = new URI("http://www.google.com");
+
+// 请求参数
+List<NameValuePair> params = new ArrayList<NameValuePair>();
+params.add(new BasicNameValuePair("keyword", "china"));
+
+// 上传文件
+Map<String, File> files = new HashMap<String, File>();
+files.put("myphoto", new File("/home/lds/some.jpg"));
+
+Response res = http.post(uri, params, files);
+String response = res.asString();
+---------------------------------
+

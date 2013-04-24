@@ -1,0 +1,42 @@
+== Location ==
+
+
+本包负责提供定位等功能，为 `LocationManager` 的包装类。
+
+
+.使用方法：
+---------------------------------------------
+LocationObserver locationObserver = LocationObserver.getInstance(this);
+
+locationObserver.getCurrentLocation(new LocationObserverListener() {
+    
+    @Override
+    public void onNoProviderSupport() {
+        Toast.makeText(getApplicationContext(), "GPS是否开启?", Toast.LENGTH_SHORT).show();
+    }
+    
+    @Override
+    public void onLocationChanged(Location location) {
+    }
+    
+    @Override
+    public boolean onGetBestLocation(Location location) {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+        textView.setText(location.toString());
+        return true;
+    }
+});
+---------------------------------------------
+
+
+.同步版本：
+-----------------------------------------
+LocationObserver locationObserver = LocationObserver.getInstance(this);
+Location location = LocationUtils.getCurrentLocation(locationObserver, context, TIMEOUT);
+-----------------------------------------
+
+
+NOTE: 注意此同步方法会阻塞当前进程，一直等到获取了地理位置才返回，因此不要在UI Thread中使用。
+

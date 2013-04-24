@@ -1,0 +1,49 @@
+== Cache ==
+
+此包负责实现文件缓存功能。
+
+NOTE: 内存缓存推荐使用 imageLoader中的实现，或者Android自带的 `LurCache` .
+
+=== 文件缓存 ===
+
+.包结构
+    * DiskCache
+    ** |- LimitedDiscCache
+    *** |- ObjectCache
+    ** |- StreamCache
+
+
+`ObjectCache` 使用JAVA自带的 `Serializable` 来实现将对象序列化存储到文件缓存中。
+
+.使用方法：
+-------------------------------------
+cache = new ObjectCache(cacheDir, "", cacheSuffix, cacheSize);
+
+Person obj = new Person();
+cache.put("key", obj);
+
+if (cache.contains("key") ) { // cache hit
+    Person person = cache.get("key");
+}
+-------------------------------------
+
+ObjectCache继承与 `LimitedDiscCache` 因此有缓存大小限制功能，其会限制缓存目录下的所有缓存文件大小总和，如果超过该总和时，会根据一定规则删除旧的缓存，使得缓存空间总保持在一定范围内。
+
+
+=== 内存缓存 ===
+
+这里首先推荐使用Android的 `LruCache` 来实现内存缓存，其实现了 LRU 原则，在缓存容量过大时，会根据缓存的使用频率到删除旧缓存。
+
+NOTE: `LruCache` Since: API Level 12， 不过其包含在 `android.support.v4` 中。
+
+.使用方法
+--------------------------------
+int cacheSize = 4 * 1024 * 1024; // 4MiB
+LruCache bitmapCache = new LruCache(cacheSize) {
+    protected int sizeOf(String key, Bitmap value) {
+        return value.getByteCount();
+}}
+    
+bitmapCache.put(key, bitmap);
+--------------------------------
+
